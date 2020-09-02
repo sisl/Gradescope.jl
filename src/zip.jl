@@ -1,5 +1,3 @@
-using ZipFile
-
 """
 Wrapper around `ZipFile.addfile` to read contents of files and add them into a zip file.
 """

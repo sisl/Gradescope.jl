@@ -76,7 +76,7 @@ Create `run_autograder` file used by Gradescope.
 
 This assumes the bulk of the autograder is done in the Julia file `run_autograder.jl`.
 """
-function create_run_autograder(; julia_version::VersionNumber=v"1.2", dir="/autograder")
+function create_run_autograder(jl_autograder::String="run_autograder.jl"; julia_version::VersionNumber=v"1.2", dir="/autograder")
     filename::String = "run_autograder"
 
     filecontent::String = """
@@ -85,7 +85,7 @@ function create_run_autograder(; julia_version::VersionNumber=v"1.2", dir="/auto
     export PATH=\$PATH:/julia-$julia_version/bin
     cp -r $dir/submission/* $dir/source/
     cd $dir/source
-    julia --color=yes run_autograder.jl
+    julia --color=yes $jl_autograder
     """
 
     open(filename, "w+") do f
