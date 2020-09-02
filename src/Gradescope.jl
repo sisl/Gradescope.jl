@@ -4,7 +4,11 @@ using JSON
 using ZipFile
 using Parameters
 
-export ZipFile,
+export Results,
+       TestCase,
+       LeaderboardEntry,
+       VisibilityMode,
+       ZipFile,
        addfile!,
        LEADERBOARD,
        set_stdout_visibility,
@@ -12,6 +16,8 @@ export ZipFile,
        gradescope_output,
        metadata
 
+
+include("gradescope_types.jl")
 include("zip.jl")
 include("setup.jl")
 # include("leaderboard.jl")

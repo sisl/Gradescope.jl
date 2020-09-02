@@ -1,8 +1,3 @@
-# Visibility modes have non-conventional type names so that their string output match the gradescope expected strings
-# See: https://gradescope-autograders.readthedocs.io/en/latest/specs/#output-format
-
-@enum VisibilityMode hidden after_due_date after_published visible
-
 global const STDOUT_VIS = Ref(hidden)
 
 get_stdout_visibility() = STDOUT_VIS.x
@@ -50,4 +45,4 @@ end
 """
 Write Gradescope formated JSON file to `results.json`
 """
-writeresults(gradescope_json::Dict) = write("/autograder/results/results.json", json(gradescope_json, 4))
+output(results::Union{Results, Dict}) = write("/autograder/results/results.json", json(results, 4))

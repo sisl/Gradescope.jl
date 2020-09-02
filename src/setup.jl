@@ -18,7 +18,7 @@ function create_setup(; julia_version::VersionNumber=v"1.2", packages::Vector{St
 
     wget $linux_url
     tar xvf $tarname
-    export PATH=\$PATH:\$(pwd)/julia-$julia_version/bin
+    export PATH=\$PATH:/julia-$julia_version/bin
     """
 
     # Add required Julia packages and precompile them.
@@ -59,7 +59,10 @@ function create_setup(; julia_version::VersionNumber=v"1.2", packages::Vector{St
     end
 
     # Confirm that `julia` is available on the PATH
-    filecontent *= "\nwhich julia"
+    filecontent *= """
+    which julia
+    echo Finished setup!
+    """
 
     open(filename, "w+") do f
         write(f, filecontent)
