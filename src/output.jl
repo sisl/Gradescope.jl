@@ -13,17 +13,17 @@ set_stdout_visibility(mode::VisibilityMode) = (STDOUT_VIS[] = mode)
 Gradescope output formatting.
 See: https://gradescope-autograders.readthedocs.io/en/latest/specs/#output-format
 """
-function gradescope_output(tests::Vector{Test}; leaderboard=false, kwargs...)
-    for t in tests
-        if isnothing(t.result)
-            runtest!(t)
-        end
-    end
+# function gradescope_output(tests::Vector{Test}; leaderboard=false, kwargs...)
+#     for t in tests
+#         if isnothing(t.result)
+#             runtest!(t)
+#         end
+#     end
 
-    infos = getproperty.(tests, :info)
+#     infos = getproperty.(tests, :info)
 
-    gradescope_output(infos; leaderboard=leaderboard, kwargs...)
-end
+#     gradescope_output(infos; leaderboard=leaderboard, kwargs...)
+# end
 
 function gradescope_output(tests::Vector{<:Dict}; leaderboard=false, kwargs...)
     output = Dict{Symbol, Any}(kwargs...)
