@@ -34,6 +34,7 @@ See: https://gradescope-autograders.readthedocs.io/en/latest/leaderboards/
     value::Optional{Union{Number, String}}
     order::LeaderboardOrder = desc
 end
+LeaderboardEntry(name::String, value::Union{Number, String}) = LeaderboardEntry(name=name, value=value)
 
 
 """

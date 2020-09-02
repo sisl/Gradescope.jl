@@ -1,48 +1,18 @@
-global const STDOUT_VIS = Ref(hidden)
+"""
+    metadata()
+    metadata(path)
 
-get_stdout_visibility() = STDOUT_VIS.x
-set_stdout_visibility(mode::VisibilityMode) = (STDOUT_VIS[] = mode)
+Retrieves the submission metadata from a json file as a `Dict`.
+See `https://gradescope-autograders.readthedocs.io/en/latest/submission_metadata/` for the metadata format.
+"""
+metadata(path="/autograder/submission_metadata.json") = JSON.parsefile(path)
 
 
 """
-Gradescope output formatting.
+    output(results::Results)
+    output(results::Dict)
+
+Write Gradescope ouput formated JSON file to `results.json`
 See: https://gradescope-autograders.readthedocs.io/en/latest/specs/#output-format
-"""
-# function gradescope_output(tests::Vector{Test}; leaderboard=false, kwargs...)
-#     for t in tests
-#         if isnothing(t.result)
-#             runtest!(t)
-#         end
-#     end
-
-#     infos = getproperty.(tests, :info)
-
-#     gradescope_output(infos; leaderboard=leaderboard, kwargs...)
-# end
-
-function gradescope_output(tests::Vector{<:Dict}; leaderboard=false, kwargs...)
-    output = Dict{Symbol, Any}(kwargs...)
-    output[:tests] = tests
-    output[:score] = sum(t[:score] for t in tests)
-
-    extra_data = get!(output, :extra_data, Dict())
-    extra_data[:language] = "julia"
-    output[:stdout_visibility] = stdout_visibility()
-
-    if leaderboard
-        output[:leaderboard] = copy(LEADERBOARD)
-    end
-
-    return output
-end
-
-function gradescope_output(filename::AbstractString, tests; leaderboard=false, kwargs...)
-    output = gradescope_output(tests; leaderboard=leaderboard, kwargs...)
-    write(filename, json(output, 4))
-end
-
-
-"""
-Write Gradescope formated JSON file to `results.json`
 """
 output(results::Union{Results, Dict}) = write("/autograder/results/results.json", json(results, 4))
