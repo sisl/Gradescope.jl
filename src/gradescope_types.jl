@@ -65,7 +65,7 @@ See: https://gradescope-autograders.readthedocs.io/en/latest/specs/#output-forma
     stdout_visibility::Optional{VisibilityMode} = missing # Optional stdout visibility setting
     extra_data::Dict = Dict() # Optional extra data to be stored
     tests::Vector{TestCase} = TestCase[] # Optional, but required if no top-level score
-    leaderboard::Vector{LeaderboardEntry} = LeaderboardEntry[] # Optional, will set up leaderboards for these values
+    leaderboard::Optional{Vector{LeaderboardEntry}} = missing # Optional, will set up leaderboards for these values
 end
 
 
