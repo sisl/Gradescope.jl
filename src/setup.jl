@@ -7,7 +7,7 @@ adds required Julia packages, and precompiles everything.
 - `julia_version` is the VersionNumber for the Julia version to download.
 - `packages` is the list of required packages to add, can be a URL for unregistered packages.
 """
-function create_setup(; julia_version::VersionNumber=v"1.2", packages::Vector{String}=String[])
+function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{String}=String[])
     filename::String = "setup.sh"
     tarname::String = "julia-$julia_version-linux-x86_64.tar.gz"
     linux_url::String = "https://julialang-s3.julialang.org/bin/linux/x64/$(julia_version.major).$(julia_version.minor)/$tarname"
@@ -79,7 +79,7 @@ Create `run_autograder` file used by Gradescope.
 
 This assumes the bulk of the autograder is done in the Julia file `run_autograder.jl`.
 """
-function create_run_autograder(jl_autograder::String="run_autograder.jl"; julia_version::VersionNumber=v"1.2", dir="/autograder")
+function create_run_autograder(jl_autograder::String="run_autograder.jl"; julia_version::VersionNumber=v"1.6.2", dir="/autograder")
     filename::String = "run_autograder"
 
     filecontent::String = """
