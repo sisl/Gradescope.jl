@@ -6,8 +6,9 @@ adds required Julia packages, and precompiles everything.
 
 - `julia_version` is the VersionNumber for the Julia version to download.
 - `packages` is the list of required packages to add, can be a URL for unregistered packages.
+- `extras` is an optional list of extra commands to include in the setup.sh file.
 """
-function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{String}=String[])
+function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{String}=String[], extras::Vector{String}=String[])
     filename::String = "setup.sh"
     tarname::String = "julia-$julia_version-linux-x86_64.tar.gz"
     linux_url::String = "https://julialang-s3.julialang.org/bin/linux/x64/$(julia_version.major).$(julia_version.minor)/$tarname"
@@ -21,6 +22,14 @@ function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{
     export PATH=\$PATH:/julia-$julia_version/bin
     export JULIA_PKG_SERVER_REGISTRY_PREFERENCE="eager"
     """
+
+    # Add (optional) extra commands to setup.sh
+    if !isempty(extras)
+        filecontent *= "\n"
+        for cmd in extras
+            filecontent *= "$cmd\n"
+        end
+    end
 
     # Add required Julia packages and precompile them.
     if !isempty(packages)
