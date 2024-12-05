@@ -23,14 +23,6 @@ function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{
     export JULIA_PKG_SERVER_REGISTRY_PREFERENCE="eager"
     """
 
-    # Add (optional) extra commands to setup.sh
-    if !isempty(extras)
-        filecontent *= "\n"
-        for cmd in extras
-            filecontent *= "$cmd\n"
-        end
-    end
-
     # Add required Julia packages and precompile them.
     if !isempty(packages)
         # direct links to unregistered packages
@@ -66,6 +58,14 @@ function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{
         julia -e 'using Pkg; $pkg_precompile'
         julia -e '$using_pkgs'
         """
+    end
+    
+    # Add (optional) extra commands to setup.sh
+    if !isempty(extras)
+        filecontent *= "\n"
+        for cmd in extras
+            filecontent *= "$cmd\n"
+        end
     end
 
     # Confirm that `julia` is available on the PATH
