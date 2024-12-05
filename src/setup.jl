@@ -19,6 +19,7 @@ function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{
     wget $linux_url
     tar xvf $tarname
     export PATH=\$PATH:/julia-$julia_version/bin
+    export JULIA_PKG_SERVER_REGISTRY_PREFERENCE="eager"
     """
 
     # Add required Julia packages and precompile them.
