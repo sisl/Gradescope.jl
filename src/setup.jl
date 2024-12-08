@@ -61,15 +61,11 @@ function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{
     end
     
     # Add (optional) extra commands to setup.sh
-    if !isempty(extras)
-        filecontent *= "\n"
-        for cmd in extras
-            filecontent *= "$cmd\n"
-        end
-    end
+    extra_cmds = join(extras, "\n")
 
     # Confirm that `julia` is available on the PATH
     filecontent *= """
+    $extra_cmds
     which julia
     echo Finished setup!
     """
@@ -86,15 +82,19 @@ end
 Create `run_autograder` file used by Gradescope.
 - `julia_version` is the Julia version downloaded by `setup.sh` and added to PATH.
 - `dir` is the root directory of the `submission` and `source` folders (change when testing locally)
+- `extras` is an optional list of extra commands to include in the run_autograder file.
 
 This assumes the bulk of the autograder is done in the Julia file `run_autograder.jl`.
 """
-function create_run_autograder(jl_autograder::String="run_autograder.jl"; julia_version::VersionNumber=v"1.6.2", dir="/autograder")
+function create_run_autograder(jl_autograder::String="run_autograder.jl"; julia_version::VersionNumber=v"1.6.2", dir="/autograder", extras::Vector{String}=String[])
     filename::String = "run_autograder"
+
+    # Add (optional) extra commands to setup.sh
+    extra_cmds = join(extras, "\n")
 
     filecontent::String = """
     #!/usr/bin/env bash
-
+    $extra_cmds
     export PATH=\$PATH:/julia-$julia_version/bin
     cp -r $dir/submission/* $dir/source/
     cd $dir/source
