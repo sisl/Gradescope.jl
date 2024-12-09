@@ -6,12 +6,25 @@ adds required Julia packages, and precompiles everything.
 
 - `julia_version` is the VersionNumber for the Julia version to download.
 - `packages` is the list of required packages to add, can be a URL for unregistered packages.
+- `registries` custom registry URLS.
 - `extras` is an optional list of extra commands to include in the setup.sh file.
 """
-function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{String}=String[], extras::Vector{String}=String[])
+function create_setup(;
+        julia_version::VersionNumber=v"1.11.2",
+        packages::Vector{String}=String[],
+        registries::Vector{String}=String[],
+        extras::Vector{String}=String[])
+
     filename::String = "setup.sh"
     tarname::String = "julia-$julia_version-linux-x86_64.tar.gz"
     linux_url::String = "https://julialang-s3.julialang.org/bin/linux/x64/$(julia_version.major).$(julia_version.minor)/$tarname"
+
+    # Custom Julia registries
+    pkg_registries_cmd::String = "julia -e 'using Pkg; Registry.add(\"General\")'"
+    if !isempty(registries)
+        pkg_registries::String = join(map(reg->"Registry.add(url=\"$reg\")", registries), ", ")
+        pkg_registries_cmd *= "\njulia -e 'using Pkg; $pkg_registries'"
+    end
 
     # Download the Julia executable, unzip it, and add the bin directory to the PATH
     filecontent::String = """
@@ -21,6 +34,8 @@ function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{
     tar xvf $tarname
     export PATH=\$PATH:/julia-$julia_version/bin
     export JULIA_PKG_SERVER_REGISTRY_PREFERENCE="eager"
+
+    $pkg_registries_cmd
     """
 
     # Add required Julia packages and precompile them.
@@ -36,7 +51,7 @@ function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{
 
         # join URL package names to be added via Pkg.add([PackageSpec(...)])
         added_pkgs_urls::String = join(map(pkg->"PackageSpec(url=\"$pkg\")", url_pkgs), ", ")
-        unregistered_added_pkgs::String = isempty(added_pkgs_urls) ? "" : "; Pkg.add([$added_pkgs_urls])"
+        unregistered_added_pkgs::String = isempty(added_pkgs_urls) ? "" : "Pkg.add([$added_pkgs_urls])"
 
         # remove any .git and .jl to get the package name from the URL
         named_pkgs_from_urls::Vector{String} = map(name->replace(name, r"(\.git|\.jl)"=>""), basename.(url_pkgs))
@@ -53,8 +68,9 @@ function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{
         end
 
         # put it all together into the file contents
-        filecontent *= """\n
-        julia -e 'using Pkg; Pkg.add([$added_pkgs])$unregistered_added_pkgs'
+        filecontent *= """
+        julia -e 'using Pkg; Pkg.add([$added_pkgs])'
+        julia -e 'using Pkg; $unregistered_added_pkgs'
         julia -e 'using Pkg; $pkg_precompile'
         julia -e '$using_pkgs'
         """
@@ -62,6 +78,9 @@ function create_setup(; julia_version::VersionNumber=v"1.6.2", packages::Vector{
     
     # Add (optional) extra commands to setup.sh
     extra_cmds = join(extras, "\n")
+    if !isempty(extra_cmds)
+        extra_cmds = string("\n", extra_cmds, "\n")
+    end
 
     # Confirm that `julia` is available on the PATH
     filecontent *= """
