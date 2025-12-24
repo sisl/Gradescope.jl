@@ -1,9 +1,12 @@
 name = "Gradescope"
 uuid = "9d952e96-2e30-4fac-b0b2-37d4e592facb"
 authors = ["Robert Moss <mossr@cs.stanford.edu>"]
-version = "0.1.4"
+version = "0.1.5"
 
 [deps]
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
 ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
+
+[compat]
+JSON = "=0.21.4"
